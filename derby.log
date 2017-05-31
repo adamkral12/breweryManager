@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Wed May 18 15:29:49 CEST 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0154-c40e-dc45-000003003db0 
+on database directory memory:/home/adam/NetBeansProjects/pv168_project (2)/kegsDB with class loader sun.misc.Launcher$AppClassLoader@4e0e2f2a 
+Loaded from file:/home/adam/.m2/repository/org/apache/derby/derby/10.12.1.1/derby-10.12.1.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_60-b27
+user.dir=/home/adam/NetBeansProjects/pv168_project (2)
+os.name=Linux
+os.arch=amd64
+os.version=3.19.0-59-generic
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

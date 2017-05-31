@@ -1,0 +1,461 @@
+package cz.muni.fi.pv168.brewerymanager.gui;
+
+import java.util.ResourceBundle;
+import javax.swing.JOptionPane;
+import cz.muni.fi.pv168.brewerymanager.backend.Data;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableColumn;
+import org.jdesktop.swingx.table.DatePickerCellEditor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ *
+ * @author adam
+ */
+public class BreweryFrame extends javax.swing.JFrame {
+
+    private static final ResourceBundle texts = ResourceBundle.getBundle("gui/texts");
+    private final EmployeeTableModel employeeModel;
+    private final KegTableModel kegModel;
+    private final WorkTableModel workModel;    
+    final static Logger log = LoggerFactory.getLogger(BreweryFrame.class.getName());
+    /**
+     * Creates new form EmployeeFrame
+     */
+    public BreweryFrame() {
+        log.info("Starting brewery frame");
+        Data.createMemoryDatabase();
+        initComponents();
+
+        employeeModel = (EmployeeTableModel) jTableEmployees.getModel();
+        kegModel = (KegTableModel) jTableKegs.getModel();
+        workModel = (WorkTableModel) jTableWorks.getModel();
+        
+        TableColumn ctd = jTableEmployees.getColumn(jTableEmployees.getColumnName(0));
+        jTableEmployees.getColumnModel().removeColumn(ctd);
+        
+        TableColumn columnKegId = jTableKegs.getColumn(jTableKegs.getColumnName(1));
+        jTableKegs.getColumnModel().removeColumn(columnKegId);  
+        
+        TableColumn dateColumn1 = jTableWorks.getColumnModel().getColumn(3);
+        TableColumn dateColumn2 = jTableWorks.getColumnModel().getColumn(5);
+        dateColumn1.setCellEditor(new DatePickerCellEditor());
+        dateColumn2.setCellEditor(new DatePickerCellEditor());
+
+    }
+    private void showEmployeeFrame() {
+        EmployeeFrame employeeFrame = new EmployeeFrame(employeeModel);
+        employeeFrame.setVisible(true);
+    }
+    
+    private void showWorkFrame() {
+        WorkFrame workFrame = new WorkFrame(workModel, employeeModel, kegModel);
+        workFrame.setVisible(true);
+    }
+    
+    private void showKegFrame() {
+        KegFrame kegFrame = new KegFrame(kegModel);
+        kegFrame.setVisible(true);
+    }
+
+    private void actionDeleteEmployee() {
+        int row = jTableEmployees.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, texts.getString("YOU HAVE TO SELECT AN EMPLOYEE"), texts.getString("CANNOT DELETE EMPLOYEE"), JOptionPane.WARNING_MESSAGE);
+            log.warn(texts.getString("CANNOT DELETE EMPLOYEE"));
+            return;
+        }
+        if (JOptionPane.showConfirmDialog(this, texts.getString("DO YOU REALLY WANT TO DELETE THE SELECTED EMPLOYEE?"), texts.getString("DELETE EMPLOYEE"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            employeeModel.removeRow(row, employeeModel);
+        }
+    }
+    
+    private void actionDeleteWork(){
+             int row = jTableWorks.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, texts.getString("YOU HAVE TO SELECT A WORK"), texts.getString("CANNOT DELETE WORK"), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (JOptionPane.showConfirmDialog(this, texts.getString("DO YOU REALLY WANT TO DELETE THE SELECTED WORK?"), texts.getString("DELETE WORK"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            workModel.removeRow(row, workModel);
+        }   
+    }
+
+    private void actionDeleteKeg() {
+        int row = jTableKegs.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, texts.getString("YOU HAVE TO SELECT A KEG"), texts.getString("CANNOT DELETE KEG"), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (JOptionPane.showConfirmDialog(this, texts.getString("DO YOU REALLY WANT TO DELETE THE SELECTED KEG?"), texts.getString("DELETE KEG"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            kegModel.removeRow(row, kegModel);
+        }
+    }
+    
+    private void actionEndWork(){
+        int row = jTableWorks.getSelectedRow();
+        Object endDateCell = jTableWorks.getValueAt(row, 5);
+        Object endTimeCell = jTableWorks.getValueAt(row, 6);
+        
+        if (endDateCell != null || endTimeCell != null ){
+             JOptionPane.showMessageDialog(this, texts.getString("WORK HAS ALREADY ENDED"), texts.getString("CANNOT END WORK"), JOptionPane.WARNING_MESSAGE);
+            return;           
+        }
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, texts.getString("YOU HAVE TO SELECT A WORK"), texts.getString("CANNOT END WORK"), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        workModel.endWork(row, workModel);
+    }
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jDatePickerUtil1 = new org.jdatepicker.util.JDatePickerUtil();
+        jTabbedTabWorks = new javax.swing.JTabbedPane();
+        jPanelEmployees = new javax.swing.JPanel();
+        jButtonAddEmployee = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableEmployees = new javax.swing.JTable();
+        jButtonDeleteEmployee = new javax.swing.JButton();
+        jPanelKegs = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTableKegs = new javax.swing.JTable();
+        jButtonAddKeg = new javax.swing.JButton();
+        jButtonDeleteKeg = new javax.swing.JButton();
+        jPanelWorks = new javax.swing.JPanel();
+        jButtonStartWork = new javax.swing.JButton();
+        jButtonEndWork = new javax.swing.JButton();
+        jButtonDeleteWork = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTableWorks = new javax.swing.JTable();
+
+        jMenuItem1.setText("jMenuItem1");
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(33, 255, 244));
+        setMinimumSize(new java.awt.Dimension(800, 300));
+        setPreferredSize(new java.awt.Dimension(849, 300));
+
+        jButtonAddEmployee.setBackground(new java.awt.Color(17, 243, 246));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gui/texts_cs_CZ"); // NOI18N
+        jButtonAddEmployee.setText(bundle.getString("ADDEMPLOYEE")); // NOI18N
+        jButtonAddEmployee.setFocusable(false);
+        jButtonAddEmployee.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonAddEmployee.setPreferredSize(new java.awt.Dimension(149, 30));
+        jButtonAddEmployee.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonAddEmployee.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddEmployeeActionPerformed(evt);
+            }
+        });
+
+        jTableEmployees.setModel(new EmployeeTableModel(employeeModel)
+        );
+        jTableEmployees.setMinimumSize(new java.awt.Dimension(800, 0));
+        jTableEmployees.getTableHeader().setReorderingAllowed(false);
+        jTableEmployees.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTableEmployeesFocusGained(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTableEmployees);
+
+        jButtonDeleteEmployee.setText(bundle.getString("DELETEEMPLOYEE")); // NOI18N
+        jButtonDeleteEmployee.setEnabled(false);
+        jButtonDeleteEmployee.setFocusable(false);
+        jButtonDeleteEmployee.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonDeleteEmployee.setPreferredSize(new java.awt.Dimension(174, 30));
+        jButtonDeleteEmployee.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonDeleteEmployee.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeleteEmployeeActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelEmployeesLayout = new javax.swing.GroupLayout(jPanelEmployees);
+        jPanelEmployees.setLayout(jPanelEmployeesLayout);
+        jPanelEmployeesLayout.setHorizontalGroup(
+            jPanelEmployeesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelEmployeesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonAddEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonDeleteEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 845, Short.MAX_VALUE)
+        );
+        jPanelEmployeesLayout.setVerticalGroup(
+            jPanelEmployeesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelEmployeesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17)
+                .addGroup(jPanelEmployeesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButtonAddEmployee, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonDeleteEmployee, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedTabWorks.addTab(bundle.getString("EMPLOYEES"), jPanelEmployees); // NOI18N
+
+        jTableKegs.setModel(new KegTableModel(kegModel));
+        jTableKegs.setMinimumSize(new java.awt.Dimension(800, 0));
+        jTableKegs.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTableKegsFocusGained(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTableKegs);
+
+        jButtonAddKeg.setText(bundle.getString("ADDKEG")); // NOI18N
+        jButtonAddKeg.setFocusable(false);
+        jButtonAddKeg.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonAddKeg.setPreferredSize(new java.awt.Dimension(99, 30));
+        jButtonAddKeg.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonAddKeg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddKegActionPerformed(evt);
+            }
+        });
+
+        jButtonDeleteKeg.setText(bundle.getString("DELETEKEG")); // NOI18N
+        jButtonDeleteKeg.setEnabled(false);
+        jButtonDeleteKeg.setFocusable(false);
+        jButtonDeleteKeg.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonDeleteKeg.setMaximumSize(new java.awt.Dimension(124, 30));
+        jButtonDeleteKeg.setMinimumSize(new java.awt.Dimension(124, 30));
+        jButtonDeleteKeg.setPreferredSize(new java.awt.Dimension(124, 30));
+        jButtonDeleteKeg.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonDeleteKeg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeleteKegActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelKegsLayout = new javax.swing.GroupLayout(jPanelKegs);
+        jPanelKegs.setLayout(jPanelKegsLayout);
+        jPanelKegsLayout.setHorizontalGroup(
+            jPanelKegsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelKegsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonAddKeg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonDeleteKeg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 845, Short.MAX_VALUE)
+        );
+        jPanelKegsLayout.setVerticalGroup(
+            jPanelKegsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelKegsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addGroup(jPanelKegsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButtonAddKeg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonDeleteKeg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+
+        jTabbedTabWorks.addTab(bundle.getString("KEGS"), jPanelKegs); // NOI18N
+
+        jButtonStartWork.setText(bundle.getString("STARTWORK")); // NOI18N
+        jButtonStartWork.setFocusable(false);
+        jButtonStartWork.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonStartWork.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonStartWork.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonStartWorkActionPerformed(evt);
+            }
+        });
+
+        jButtonEndWork.setText(bundle.getString("ENDWORK")); // NOI18N
+        jButtonEndWork.setEnabled(false);
+        jButtonEndWork.setFocusable(false);
+        jButtonEndWork.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonEndWork.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonEndWork.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEndWorkActionPerformed(evt);
+            }
+        });
+
+        jButtonDeleteWork.setText(bundle.getString("DELETE WORK")); // NOI18N
+        jButtonDeleteWork.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeleteWorkActionPerformed(evt);
+            }
+        });
+
+        jTableWorks.setModel(new WorkTableModel(workModel));
+        jTableWorks.setMinimumSize(new java.awt.Dimension(800, 0));
+        jTableWorks.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTableWorksFocusGained(evt);
+            }
+        });
+        jTableWorks.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableWorksMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(jTableWorks);
+
+        javax.swing.GroupLayout jPanelWorksLayout = new javax.swing.GroupLayout(jPanelWorks);
+        jPanelWorks.setLayout(jPanelWorksLayout);
+        jPanelWorksLayout.setHorizontalGroup(
+            jPanelWorksLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelWorksLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonStartWork)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 267, Short.MAX_VALUE)
+                .addComponent(jButtonEndWork)
+                .addGap(254, 254, 254)
+                .addComponent(jButtonDeleteWork)
+                .addContainerGap())
+            .addComponent(jScrollPane3)
+        );
+        jPanelWorksLayout.setVerticalGroup(
+            jPanelWorksLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelWorksLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addGroup(jPanelWorksLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButtonStartWork, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonEndWork, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonDeleteWork, javax.swing.GroupLayout.Alignment.TRAILING)))
+        );
+
+        jTabbedTabWorks.addTab(bundle.getString("WORKS"), jPanelWorks); // NOI18N
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jTabbedTabWorks)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedTabWorks, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonAddEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddEmployeeActionPerformed
+        showEmployeeFrame();
+    }//GEN-LAST:event_jButtonAddEmployeeActionPerformed
+
+    private void jButtonDeleteEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteEmployeeActionPerformed
+        actionDeleteEmployee();
+    }//GEN-LAST:event_jButtonDeleteEmployeeActionPerformed
+
+    private void jButtonAddKegActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddKegActionPerformed
+        showKegFrame();
+    }//GEN-LAST:event_jButtonAddKegActionPerformed
+
+    private void jTableKegsFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableKegsFocusGained
+        jButtonDeleteEmployee.setEnabled(false);
+        jButtonDeleteKeg.setEnabled(true);
+        jButtonEndWork.setEnabled(false);
+    }//GEN-LAST:event_jTableKegsFocusGained
+
+    private void jTableEmployeesFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableEmployeesFocusGained
+        jButtonDeleteEmployee.setEnabled(true);
+        jButtonDeleteKeg.setEnabled(false);
+        jButtonEndWork.setEnabled(false);
+    }//GEN-LAST:event_jTableEmployeesFocusGained
+
+    private void jTableWorksFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableWorksFocusGained
+        jButtonDeleteEmployee.setEnabled(false);
+        jButtonDeleteKeg.setEnabled(false);
+        jButtonEndWork.setEnabled(true);
+    }//GEN-LAST:event_jTableWorksFocusGained
+
+    private void jButtonDeleteKegActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteKegActionPerformed
+        actionDeleteKeg();
+    }//GEN-LAST:event_jButtonDeleteKegActionPerformed
+
+    private void jButtonStartWorkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartWorkActionPerformed
+       showWorkFrame();
+    }//GEN-LAST:event_jButtonStartWorkActionPerformed
+
+    private void jButtonEndWorkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEndWorkActionPerformed
+       actionEndWork();
+    }//GEN-LAST:event_jButtonEndWorkActionPerformed
+
+    private void jTableWorksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableWorksMouseClicked
+
+    }//GEN-LAST:event_jTableWorksMouseClicked
+
+    private void jButtonDeleteWorkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteWorkActionPerformed
+        actionDeleteWork();
+    }//GEN-LAST:event_jButtonDeleteWorkActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(BreweryFrame.class.getName()).log(java.util.logging.Level.ALL, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(BreweryFrame.class.getName()).log(java.util.logging.Level.ALL, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(BreweryFrame.class.getName()).log(java.util.logging.Level.ALL, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(BreweryFrame.class.getName()).log(java.util.logging.Level.ALL, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new BreweryFrame().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAddEmployee;
+    private javax.swing.JButton jButtonAddKeg;
+    private javax.swing.JButton jButtonDeleteEmployee;
+    private javax.swing.JButton jButtonDeleteKeg;
+    private javax.swing.JButton jButtonDeleteWork;
+    private javax.swing.JButton jButtonEndWork;
+    private javax.swing.JButton jButtonStartWork;
+    private org.jdatepicker.util.JDatePickerUtil jDatePickerUtil1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JPanel jPanelEmployees;
+    private javax.swing.JPanel jPanelKegs;
+    private javax.swing.JPanel jPanelWorks;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane jTabbedTabWorks;
+    private javax.swing.JTable jTableEmployees;
+    private javax.swing.JTable jTableKegs;
+    private javax.swing.JTable jTableWorks;
+    // End of variables declaration//GEN-END:variables
+}
